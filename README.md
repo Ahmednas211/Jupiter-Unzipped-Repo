@@ -35,9 +35,9 @@ This project is geared towards the deployment of a simple static web application
   
 2. Security Group Configuration:
 
-    - ALB Security Group: Create a Security Group for the Application Load Balancer (ALB) to allow inbound HTTP/HTTPS traffic from 0.0.0.0/0 or specific trusted IP ranges.
+    - ALB Security Group: Create a Security Group for the Application Load Balancer (ALB) to allow inbound HTTP and HTTPS traffic from 0.0.0.0/0.
   
-    - Web Server Security Group: Configure a Security Group for your EC2 instances to allow inbound HTTP/HTTPS traffic from the ALB Security Group and other necessary resources. Implement the principle of least privilege.
+    - Web Server Security Group: Configure a Security Group for your EC2 instances to allow inbound HTTP and HTTPS traffic from the ALB Security Group as welL SSH from "My IP".
   
 3. DNS and SSL/TLS Certificate Setup:
 
@@ -86,7 +86,7 @@ This project is geared towards the deployment of a simple static web application
 
 9. Testing and Monitoring:
 
-    - esting: After DNS records have propagated, thoroughly test your application using the domain name (HTTPS) to verify the deployment's success.
+    - Testing: After DNS records have propagated, thoroughly test your application using the domain name (HTTPS) to verify the deployment's success.
       
     - Monitoring: Implement cloud monitoring and logging solutions (e.g., AWS CloudWatch) to monitor the health and performance of your infrastructure and applications.
   
