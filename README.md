@@ -102,7 +102,7 @@ This project is geared towards the deployment of a simple static web application
 
     - Maintain detailed documentation of the deployment process, infrastructure architecture, and any changes made over time.
 
-## **Landing Page of Static Website Image**
+## ** A Screenshot of Landing Page Static Website**
 
 <p align="center">
 <img src="https://i.imgur.com/eUP7W7a.png" height="75%" width="95%" alt="RDP event fail logs to iP Geographic information"/>
@@ -112,4 +112,4 @@ This project is geared towards the deployment of a simple static web application
 <img src="https://i.imgur.com/ZHRd67Q.png" height="75%" width="95%" alt="RDP event fail logs to iP Geographic information"/>
 </p>
 
-**Congratulations! You've successfuly hosted a static jupiter website :) :)**
+**Congratulations! You've Successfuly Hosted a Static Jupiter Website :)**
