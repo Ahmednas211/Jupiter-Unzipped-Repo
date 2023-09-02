@@ -1,0 +1,37 @@
+# Stage 1: Builder stage to download and extract the files
+FROM amazonlinux:latest AS builder
+
+# Run commands to install dependencies and set up the working directory
+RUN yum update -y && \
+    yum install -y wget unzip
+
+# Set the working directory inside the container
+WORKDIR /var/www/html
+
+# Download the ZIP file from the GitHub repository
+RUN wget https://github.com/obinnaaliogor/jupiter/archive/refs/heads/main.zip
+
+# Extract the downloaded ZIP file contents and clean up unnecessary files
+RUN unzip main.zip && \
+    mv jupiter-main/* . && \
+    rm -rf jupiter-main main.zip
+
+
+# Stage 2: Production stage with the official httpd image
+FROM amazonlinux:latest
+
+# Expose the default HTTP port (80)
+EXPOSE 80
+
+# Set the working directory inside the container
+WORKDIR /var/www/html
+
+# Copy the built application files directly from the builder stage
+COPY --from=builder /var/www/html/ .
+
+# Install httpd (Apache HTTP server) for the production image
+RUN yum install -y httpd
+
+# Start the Apache HTTP server when the container starts
+CMD ["/usr/sbin/httpd", "-D", "FOREGROUND"]
+

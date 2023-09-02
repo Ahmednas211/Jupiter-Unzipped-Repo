@@ -1,103 +1,82 @@
-# Deploying a Static and Secured Website Using a 3 Tier-Architecture
-This project is geared towards the deployment of a simple static web application on Amazon Web Services (AWS) utilizing a comprehensive 3-tier architectural framework. This architecture is made up of a Virtual Private Cloud (VPC), strategically configured Subnets, a NAT Gateway, an Internet Gateway for seamless connectivity, a meticulously designed Route Table, Security Groups, the integration of Amazon Route 53 for robust DNS management, AWS Certificate Manager for the establishment of secure SSL/TLS certification, the implementation of an Application Load Balancer (ALB) for optimized traffic distribution, the utilization of EC2 instances for efficient computation, the orchestration of an Auto Scaling Group for dynamic resource management, and lastly, the creation of a Launch Template to streamline instance launches.
+# AWS Static Application Deployment using 3-Tier Architecture
+
+This project aims to deploy a static application on AWS using a 3-tier architecture. The architecture includes a Virtual Private Cloud (VPC), Subnets, NAT Gateway, Internet Gateway, Route Table, Security Groups, Amazon Route 53 for DNS management, AWS Certificate Manager for SSL/TLS certificate, Application Load Balancer (ALB), EC2 instances, Auto Scaling Group, and Launch Template.
 
 ## Prerequisites
-1- Clone my github repo in the following link OR download the zipped file here [jupiter-zip-file](https://github.com/Ahmednas211/jupiter-zip-file)
 
-2- Allow all the necessary permissions from root account.
+Before you begin, ensure you have the following:
 
-3- Basic knowledge of AWS Command Line Interface and Github.
+1. An AWS account with appropriate permissions to create the required resources.
+2. AWS CLI installed and configured on your local machine.
+3. Basic knowledge of AWS services and command-line interface.
 
 ## Architecture Overview
-Tier 1: The first tier is expected to accommodate our Applciation Load Balancer, sitting between two Availability Zones (AZ-1: us-east-1a & AZ-2: us-east-2b).
 
-Tier 2: The second tier is our private Application Webserver (resposnsible for serving the staic website). This layer also accommodates our Auto-Scaling Group to ensure high avalability and scalability of our EC2 intances accross the two AZs indicated above. 
+The architecture follows a classic 3-tier setup, separating the application into three layers:
 
-Tier 3: This tier is responsible for storing and managing data. However, in a static website, there may not be a need for a database because static sites don't typically store dynamic data that needs to be retrieved or modified frequently. Instead, you might use simpler storage solutions like S3 or Content Delivery Networks (CDNs) to serve static assets.
+1. **Presentation Tier**: This layer handles user interactions and serves as the entry point for the application. It consists of an Application Load Balancer (ALB) that distributes incoming traffic across multiple web server instances.
 
-## Sample Architecture
+2. **Application Tier**: This layer hosts the web servers responsible for serving the static application. EC2 instances are used to deploy the web servers. An Auto Scaling Group ensures high availability and scalability of the application.
 
-![Static Web Application Architecture](https://i.imgur.com/Z1o1RnL.png)
+3. **Data Tier**: As this project involves a static application, there is no dedicated data tier. However, if required, you can integrate a database or use AWS S3 for storing static files.
 
 ## Deployment Steps
 
-1. **Infrastructure Setup:**
+Follow these steps to deploy the static application using the provided Bash script:
 
-    - VPC Creation: Create a Virtual Private Cloud (VPC) with public and private subnets using AWS Management Console or AWS CLI. Ensure that you carefully plan your IP addressing scheme and route tables (Check provided architecture for proper reference).
+1. **Create the VPC, Subnets, Internet Gateway, and NAT Gateway**:
+   - Use AWS Management Console or AWS CLI to create a VPC with public and private subnets.
+   - Attach an Internet Gateway to the VPC to allow communication with the internet.
+   - Set up a NAT Gateway in the public subnet to enable internet access for instances in the private subnet.
 
-    - Internet Connectivity: Attach an Internet Gateway to the VPC to enable communication with the internet.
+2. **Create Security Groups**:
+   - Set up Security Groups for the ALB, EC2 instances, and any other necessary resources. For example:
+     - ALB Security Group (Allow inbound HTTP/HTTPS from 0.0.0.0/0)
+     - Web Server Security Group (Allow inbound HTTP/HTTPS from ALB Security Group)
 
-    - NAT Gateway: Set up a NAT Gateway in the public subnet to allow instances in the private subnet to access the internet securely.
+3. **Configure Route 53 and Obtain SSL Certificate**:
+   - Create a hosted zone on Route 53 to manage the DNS for your application.
+   - Obtain an SSL/TLS certificate using AWS Certificate Manager for your domain/subdomain to enable HTTPS traffic.
 
-2. **Security Group Configuration:**
+4. **Create the Application Load Balancer (ALB)**:
+   - Set up the Application Load Balancer (ALB) and associate it with the ALB Security Group and the public subnets.
 
-    - ALB Security Group: Create a Security Group for the Application Load Balancer (ALB) to allow inbound HTTP and HTTPS traffic from Anywhere (0.0.0.0/0).
+5. **Create Launch Template**:
+   - Create a Launch Template with the required specifications for your EC2 instances.
 
-    - Web Server Security Group: Configure a Security Group for your EC2 instances to allow inbound HTTP and HTTPS traffic from the ALB Security Group. Then SSH from "MY IP".
+6. **Launch EC2 Instances using Auto Scaling Group**:
+   - Use the Launch Template to create an Auto Scaling Group (ASG) that launches EC2 instances in the private subnet.
+   - Configure the ASG to use the ALB as the target group for distributing traffic.
 
-3. **Application Load Balancer (ALB):**
+7. **Run the Bash Script on EC2 Instances**:
+   - Connect to the EC2 instances launched by the Auto Scaling Group via SSH.
+   - Copy the provided Bash script to the instances and execute it to install and configure the web servers.
 
-    - ALB Setup: Configure the Application Load Balancer (ALB) and associate it with the ALB Security Group. Ensure it's connected to the appropriate public subnets.
+8. **Configure ALB Listener**:
+   - Set up an ALB Listener to listen on port 80 (HTTP) and port 443 (HTTPS) and forward traffic to the EC2 instances.
 
-    - Listeners: Set up ALB listeners for HTTP (port 80) and HTTPS (port 443) to forward traffic to backend EC2 instances. Configure appropriate SSL policies for HTTPS.
+9. **Point DNS to ALB**:
+   - Update the DNS records on Route 53 to point to the ALB's DNS name.
 
-4. **DNS and SSL/TLS Certificate Setup:**
+10. **Testing**:
+   - Once the DNS records have propagated, access your application using the domain name (HTTPS) to ensure the deployment is successful.
 
-    - Route 53 Configuration: Create a hosted zone on Route 53 to manage the DNS records for your application. Configure DNS records like A and CNAME records as needed.
+## Additional Considerations
 
-    - SSL/TLS Certificate: Obtain an SSL/TLS certificate using AWS Certificate Manager for your domain or subdomain to enable secure HTTPS traffic. Ensure the certificate is associated with the ALB.
+1. **Security**:
+   - Implement secure practices, such as regularly updating packages and using secure passwords/SSH keys.
+   - Restrict access to critical resources by modifying security group rules and network ACLs.
 
-5. **Auto Scaling Group (ASG):**
+2. **Monitoring and Logging**:
+   - Set up CloudWatch Alarms to monitor the health of your EC2 instances and ALB.
+   - Configure centralized logging to track application and server logs.
 
-    - ASG Configuration: Create an Auto Scaling Group (ASG) using the Launch Template. Configure scaling policies, instance count, and health checks.
+3. **Scaling**:
+   - Monitor your application's traffic and performance to determine if you need to adjust the Auto Scaling settings for your instances.
 
-    - Target Group: Set up a Target Group and configure it as the target for the ASG. This ensures that traffic is distributed correctly among instances.
+4. **Backup and Recovery**:
+   - Consider implementing backup strategies for your static files, especially if your application allows user-generated content.
 
-6. **Launch EC2 & Bash Script Execution:**
+## Conclusion
 
-    - Instance Access: Connect securely to the EC2 instances launched by the ASG using SSH. Ensure that SSH keys and access credentials are managed securely.
-
-    - Bash Script: Copy the provided Bash script to the instances and execute it. Include error handling, logging, and validation steps in the script to ensure the web servers are installed and configured correctly.
-
-    ```
-    #!/bin/bash
-    sudo su
-    yum update -y 
-    yum install httpd -y
-    cd /var/www/html
-    wget https://github.com/Ahmednas211/jupiter-zip-file/raw/main/jupiter-main.zip
-    unzip jupiter-main.zip
-    cp -r jupiter-main/* /var/www/html
-    rm -rf jupiter-main jupiter-main.zip
-    systemctl start httpd
-    systemctl enable httpd
-
-    ```
-
-7. **ALB Listener Configuration:**
-
-    - Listener Rules: Define rules in the ALB listener to route traffic based on hostnames, paths, or other criteria. Ensure that traffic is appropriately directed to backend instances.
-
-8. **DNS Configuration:**
-
-    - Route 53 Updates: Update DNS records in Route 53 to point to the ALB's DNS name. Implement health checks in Route 53 to monitor the availability of your application.
-
-9. **Testing and Monitoring:**
-
-    - Testing: After DNS records have propagated, thoroughly test your application using the domain name (HTTPS) to verify the deployment's success.
-  
-    - Monitoring: Implement cloud monitoring and logging solutions (e.g., AWS CloudWatch) to monitor the health and performance of your infrastructure and applications.
-
-10. **Backup and Disaster Recovery:**
-
-    - Implement backup and disaster recovery mechanisms to ensure data and application availability in case of failures.
-
-11. **Security and Compliance:**
-
-    - Follow AWS security best practices, implement IAM roles and policies, and consider compliance requirements specific to your application.
-
-12. **Documentation:**
-
-    - Maintain detailed documentation of the deployment process, infrastructure architecture, and any changes made over time.
-   
-
+Congratulations! You have successfully deployed your static application on AWS using a 3-tier architecture. Feel free to enhance the project further by integrating a database, CDN, or additional AWS services to meet your specific requirements. Always remember to monitor your resources and follow best practices for security and scalability. Happy coding!
