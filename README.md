@@ -102,7 +102,7 @@ This project is geared towards the deployment of a simple static web application
 
     - Maintain detailed documentation of the deployment process, infrastructure architecture, and any changes made over time.
 
-## ** A Screenshot of Landing Page Static Website**
+## **A Screenshot of Landing Page Static Website**
 
 <p align="center">
 <img src="https://i.imgur.com/eUP7W7a.png" height="75%" width="95%" alt="RDP event fail logs to iP Geographic information"/>
