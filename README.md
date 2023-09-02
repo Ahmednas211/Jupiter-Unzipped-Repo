@@ -19,7 +19,7 @@ This project is geared towards the deployment of a simple static web application
 ## **Architecture**
 
 <p align="center">
-<img src="https://i.imgur.com/Z1o1RnL.png" height="50%" width="65%" alt="RDP event fail logs to iP Geographic information"/>
+<img src="https://i.imgur.com/Z1o1RnL.png" height="50%" width="75%" alt="RDP event fail logs to iP Geographic information"/>
 </p>
 
 ## **Replicating the Architecture: Deployment Steps**
